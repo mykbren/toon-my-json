@@ -1,0 +1,15 @@
+*.gem
+/pkg/
+/checksums/
+/coverage/
+/.bundle/
+/vendor/bundle
+.rspec_status
+.rubocop-*
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.log
