@@ -1,0 +1,49 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.0
+  SuggestExtensions: false
+
+# Allow longer blocks in spec files - common for RSpec tests
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'bin/*'
+    - '*.gemspec'
+
+# Allow longer classes for main encoder/decoder
+Metrics/ClassLength:
+  Max: 200
+
+# Allow slightly longer methods for complex parsing logic
+Metrics/MethodLength:
+  Max: 45
+  Exclude:
+    - 'spec/**/*'
+
+# Allow higher ABC size for parsing methods
+Metrics/AbcSize:
+  Max: 40
+
+# Allow higher complexity for parsing methods - parser needs it
+Metrics/CyclomaticComplexity:
+  Max: 15
+
+Metrics/PerceivedComplexity:
+  Max: 16
+
+# Allow deeper nesting in parsing logic
+Metrics/BlockNesting:
+  Max: 4
+
+# Lint: Allow constant definition in blocks for test helpers
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - 'spec/**/*'
+
+# Gemspec: Development dependencies are fine in gemspec for gems
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+# Lint: Allow duplicate branches - Numeric case is intentional for clarity
+Lint/DuplicateBranch:
+  Enabled: false

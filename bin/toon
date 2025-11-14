@@ -1,0 +1,79 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/toon_my_json'
+require 'optparse'
+
+options = {
+  indent: 2,
+  delimiter: ',',
+  length_marker: true,
+  mode: :encode
+}
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: toon [options] [file]'
+  opts.separator ''
+  opts.separator 'Convert between JSON and TOON formats'
+  opts.separator ''
+  opts.separator 'Options:'
+
+  opts.on('-e', '--encode', 'Encode JSON to TOON (default)') do
+    options[:mode] = :encode
+  end
+
+  opts.on('-D', '--decode', 'Decode TOON to JSON') do
+    options[:mode] = :decode
+  end
+
+  opts.on('-i', '--indent N', Integer, 'Indentation spaces (default: 2)') do |n|
+    options[:indent] = n
+  end
+
+  opts.on('-d', '--delimiter CHAR', String, 'Field delimiter (default: ,)') do |d|
+    options[:delimiter] = d
+  end
+
+  opts.on('--no-length-marker', 'Disable array length markers (encode only)') do
+    options[:length_marker] = false
+  end
+
+  opts.on('-h', '--help', 'Show this help message') do
+    puts opts
+    exit
+  end
+
+  opts.on('-v', '--version', 'Show version') do
+    puts "toon_my_json version #{ToonMyJson::VERSION}"
+    exit
+  end
+end.parse!
+
+begin
+  # Read from file or stdin
+  input = if ARGV.empty?
+            $stdin.read
+          else
+            File.read(ARGV[0])
+          end
+
+  # Convert and output
+  mode = options.delete(:mode)
+  result = if mode == :decode
+             # Remove encode-only options
+             decode_options = options.slice(:indent, :delimiter)
+             ToonMyJson.decode(input, **decode_options, json: true)
+           else
+             ToonMyJson.encode(input, **options)
+           end
+  puts result
+rescue JSON::ParserError => e
+  warn "Error: Invalid JSON - #{e.message}"
+  exit 1
+rescue Errno::ENOENT => e
+  warn "Error: File not found - #{e.message}"
+  exit 1
+rescue StandardError => e
+  warn "Error: #{e.message}"
+  exit 1
+end
